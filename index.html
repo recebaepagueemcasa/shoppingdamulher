@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopping da Mulher</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+body{font-family:Poppins,sans-serif;background:#f9fafb}
+.rosa{color:#e91e63}
+.bg-rosa{background:#e91e63}
+.card{transition:.3s}
+.card:hover{transform:translateY(-5px);box-shadow:0 15px 35px rgba(0,0,0,.08)}
+</style>
+</head>
+
+<body>
+
+<header class="bg-white shadow-sm py-4 text-center">
+<h1 class="text-2xl font-bold rosa">Shopping da Mulher</h1>
+</header>
+
+<!-- FILTROS -->
+<section class="py-6 px-4 bg-white">
+<div class="max-w-7xl mx-auto flex flex-wrap gap-4 items-center justify-between">
+
+<input type="text" id="busca"
+placeholder="Buscar produto..."
+class="border rounded-lg px-4 py-2 w-full sm:w-64">
+
+<select id="categoriaFiltro"
+class="border rounded-lg px-4 py-2">
+<option value="todas">Todas Categorias</option>
+</select>
+
+<select id="ordenar"
+class="border rounded-lg px-4 py-2">
+<option value="padrao">Ordenar</option>
+<option value="menor">Menor preço</option>
+<option value="maior">Maior preço</option>
+</select>
+
+</div>
+</section>
+
+<!-- PRODUTOS -->
+<section class="py-10 px-4">
+<div id="produtosContainer"
+class="max-w-7xl mx-auto grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+</div>
+</section>
+
+<script>
+
+let produtosData = [];
+
+fetch('produtos.json')
+.then(res => res.json())
+.then(produtos => {
+  produtosData = produtos;
+  montarCategorias(produtos);
+  renderizar(produtos);
+});
+
+function montarCategorias(produtos){
+  const categorias = [...new Set(produtos.map(p => p.categoria))];
+  const select = document.getElementById('categoriaFiltro');
+  categorias.forEach(cat=>{
+    select.innerHTML += `<option value="${cat}">${cat}</option>`;
+  });
+}
+
+function renderizar(produtos){
+  const container = document.getElementById('produtosContainer');
+  container.innerHTML = '';
+
+  produtos.forEach(produto=>{
+    container.innerHTML += `
+      <div class="bg-white rounded-2xl p-5 border border-gray-200 card">
+        <img src="${produto.imagem}" class="rounded-xl mb-4">
+        <h3 class="font-bold text-lg mb-2">${produto.nome}</h3>
+
+        <div class="mb-4">
+          <span class="line-through text-gray-400 mr-2">
+          R$ ${produto.preco_de.toFixed(2).replace('.',',')}
+          </span>
+          <span class="text-xl font-bold rosa">
+          R$ ${produto.preco_por.toFixed(2).replace('.',',')}
+          </span>
+        </div>
+
+        <a href="produto.html?id=${produto.id}"
+        class="block bg-rosa text-white py-2 rounded-lg text-center">
+        Ver Produto
+        </a>
+      </div>
+    `;
+  });
+}
+
+document.getElementById('busca').addEventListener('input', filtrar);
+document.getElementById('categoriaFiltro').addEventListener('change', filtrar);
+document.getElementById('ordenar').addEventListener('change', filtrar);
+
+function filtrar(){
+  let filtrados = [...produtosData];
+
+  const busca = document.getElementById('busca').value.toLowerCase();
+  const categoria = document.getElementById('categoriaFiltro').value;
+  const ordem = document.getElementById('ordenar').value;
+
+  if(busca){
+    filtrados = filtrados.filter(p =>
+      p.nome.toLowerCase().includes(busca)
+    );
+  }
+
+  if(categoria !== 'todas'){
+    filtrados = filtrados.filter(p =>
+      p.categoria === categoria
+    );
+  }
+
+  if(ordem === 'menor'){
+    filtrados.sort((a,b)=>a.preco_por-b.preco_por);
+  }
+
+  if(ordem === 'maior'){
+    filtrados.sort((a,b)=>b.preco_por-a.preco_por);
+  }
+
+  renderizar(filtrados);
+}
+
+</script>
+
+</body>
+</html>

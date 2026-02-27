@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "nome": "Progressiva Vegetal Havana 500ml",
+    "categoria": "Progressivas",
+    "imagem": "1-pvh.png",
+    "preco_de": 250,
+    "preco_por": 170,
+    "link_entrega": "LINK_LOGZZ",
+    "link_online": "LINK_COINZZ",
+    "descricao": "Descrição completa."
+  },
+  {
+    "id": 2,
+    "nome": "Máscara Vita A",
+    "categoria": "Máscaras",
+    "imagem": "placeholder.png",
+    "preco_de": 199,
+    "preco_por": 129,
+    "link_entrega": "#",
+    "link_online": "#",
+    "descricao": "Descrição máscara."
+  }
+]
